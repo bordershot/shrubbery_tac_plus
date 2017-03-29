@@ -18,7 +18,7 @@ node{
     }
   }
   stage('test') {
-    docker.image('centos7').inside('-u 0') {
+    docker.image('centos:7').inside('-u 0') {
       sh 'yum -y install $WORKSPACE/tacacs*.rpm'
     }
   }

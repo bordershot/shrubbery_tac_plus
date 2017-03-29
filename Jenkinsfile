@@ -16,10 +16,10 @@ node{
       sh 'fpm -f -t rpm -s dir -n tacacs --version 1.0 --description "DD TacPlus" --depends pam-devel --depends tcp-wrappers -C $WORKSPACE/fpm-build .'
       sh 'rm -rf $WORKSPACE/fpm-build'
     }
-    stage('test') {
-      docker.image.('centos7').inside {
-        sh 'yum -y install $WORKSPACE/tacacs*.rpm'
-      }
+  }
+  stage('test') {
+    docker.image.('centos7').inside {
+      sh 'yum -y install $WORKSPACE/tacacs*.rpm'
     }
   }
 }

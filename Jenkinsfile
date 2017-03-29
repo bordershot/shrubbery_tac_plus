@@ -1,4 +1,4 @@
-def osmap = ['Ubuntu1604':['packaging':'deb', 'init':'systemd', 'build_env:'', 'build_deps':'', 'install_deps':[], test_env:[]], 
+def osmap = ['Ubuntu1604':['packaging':'deb', 'init':'systemd', 'build_env:'asdf', 'build_deps':'', 'install_deps':[], test_env:[]], 
              'Ubuntu1404':'Ubuntu-1404-server/Ubuntu-1404-server0-000002.vmdk', 
              'Fedora24':'Fedora-24/Fedora-240-000001.vmdk', 
              'CentOS7':['packaging':'rpm', 'init':'systemd', 'build_env:'fwd-centos-7:latest', 

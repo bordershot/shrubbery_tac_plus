@@ -1,6 +1,6 @@
 node{
   sh 'echo "FROM alanfranz/fwd-centos-7:latest" > Dockerfile'
-  sh 'echo "RUN yum install -y $CentOS7_Build_Dependencies" >> Dockerfile'
+  sh 'echo "RUN yum install -y gcc bison flex m4 pam-devel tcp-wrappers tcp_wrappers-devel" >> Dockerfile'
   def buildcontainer = docker.build('fpm', '-f Dockerfile .').inside {
     stage 'download'
     git url: 'git@github.com:bordershot/shrubbery_tac_plus.git'

@@ -1,3 +1,10 @@
+def osmap = ['Ubuntu1604':['packaging':'deb', 'init':'systemd', 'build_env:'', 'build_deps':'', 'install_deps':[], test_env:[]], 
+             'Ubuntu1404':'Ubuntu-1404-server/Ubuntu-1404-server0-000002.vmdk', 
+             'Fedora24':'Fedora-24/Fedora-240-000001.vmdk', 
+             'CentOS7':['packaging':'rpm', 'init':'systemd', 'build_env:'fwd-centos-7:latest', 
+                        'build_deps':'gcc bison flex m4 pam-devel tcp_wrappers tcp_wrappers-devel', 
+                        'install_deps':['pam-devel', 'tcp_wrappers'], test_env:'centos:7']
+            ]
 node{
   stage('setup_env') {
     sh 'echo "FROM alanfranz/fwd-centos-7:latest" > Dockerfile'

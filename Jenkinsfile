@@ -1,7 +1,7 @@
 node{
   stage('setup_env') {
     sh 'echo "FROM alanfranz/fwd-centos-7:latest" > Dockerfile'
-    sh 'echo "RUN yum install -y gcc bison flex m4 pam-devel tcp-wrappers tcp_wrappers-devel" >> Dockerfile'
+    sh 'echo "RUN yum install -y gcc bison flex m4 pam-devel tcp_wrappers tcp_wrappers-devel" >> Dockerfile'
   }
   def buildcontainer = docker.build('fpm', '-f Dockerfile .').inside {
     stage('download') {
@@ -13,7 +13,7 @@ node{
       sh './configure && make && make install DESTDIR=$WORKSPACE/fpm-build'
     }
     stage('package') {
-      sh 'fpm -f -t rpm -s dir -n tacacs --version 1.0 --description "DD TacPlus" --depends pam-devel --depends tcp-wrappers -C $WORKSPACE/fpm-build .'
+      sh 'fpm -f -t rpm -s dir -n tacacs --version 1.0 --description "DD TacPlus" --depends pam-devel --depends tcp_wrappers -C $WORKSPACE/fpm-build .'
       sh 'rm -rf $WORKSPACE/fpm-build'
     }
   }

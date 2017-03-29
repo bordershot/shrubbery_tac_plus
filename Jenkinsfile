@@ -8,5 +8,7 @@ node{
     sh 'mkdir $WORKSPACE/fpm-build'
     sh 'if [ -d "dist" ]; then [ -d "dist/default" ] && rsync -a dist/default/ $OUTPUT_DIR; [ -d "dist/systemd" ] && rsync -a dist/systemd/ $OUTPUT_DIR; [ -d "dist/sysv" ] && rsync -a dist/sysv/ $OUTPUT_DIR; fi'
     sh './configure && make && make install DESTDIR=$WORKSPACE/fpm-build'
+    sh 'fpm -t rpm -s dir -n tacacs --version 1.0 --description "DD TacPlus" --depends pam-devel --depends tcp-wrappers -C $WORKSPACE/fpm-build .'
+    sh 'rm -rf $WORKSPACE/fpm-build'
   }
 }

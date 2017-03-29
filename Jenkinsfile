@@ -19,7 +19,7 @@ node{
   }
   stage('test') {
     sh 'echo "FROM centos:7" > Dockerfile'
-    sh 'echo "RUN ls $WORKSPACE/*.rpm" >> Dockerfile'
+    sh 'echo "RUN ls $WORKSPACE" >> Dockerfile'
     docker.build('test_env', '-f Dockerfile .').withRun
   }
 }

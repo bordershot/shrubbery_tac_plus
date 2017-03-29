@@ -17,4 +17,9 @@ node{
       sh 'rm -rf $WORKSPACE/fpm-build'
     }
   }
+  stage('test') {
+    docker.image('centos7').inside {
+      sh 'yum -y install $WORKSPACE/tacacs*.rpm'
+    }
+  }
 }

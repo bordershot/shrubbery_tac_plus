@@ -13,7 +13,7 @@ node{
       sh './configure && make && make install DESTDIR=$WORKSPACE/fpm-build'
     }
     stage('package') {
-      sh 'fpm -t rpm -s dir -n tacacs --version 1.0 --description "DD TacPlus" --depends pam-devel --depends tcp-wrappers -C $WORKSPACE/fpm-build .'
+      sh 'fpm -f -t rpm -s dir -n tacacs --version 1.0 --description "DD TacPlus" --depends pam-devel --depends tcp-wrappers -C $WORKSPACE/fpm-build .'
       sh 'rm -rf $WORKSPACE/fpm-build'
     }
     stage('test') {

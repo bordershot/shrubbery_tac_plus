@@ -1,5 +1,5 @@
 node{
-  stage 'setup env' {
+  stage 'setup' {
     sh 'echo "FROM alanfranz/fwd-centos-7:latest" > Dockerfile'
     sh 'echo "RUN yum install -y gcc bison flex m4 pam-devel tcp-wrappers tcp_wrappers-devel" >> Dockerfile'
   }

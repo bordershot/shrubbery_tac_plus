@@ -18,8 +18,8 @@ node{
     }
   }
   stage('test') {
-    sh 'echo "FROM centos:7" > Dockerfile'
-    sh 'echo "RUN ls $WORKSPACE" >> Dockerfile'
-    docker.build('test_env', '-f Dockerfile .').withRun
+    docker.image('centos7', '-u 0').inside {
+      sh 'yum -y install $WORKSPACE/tacacs*.rpm'
+    }
   }
 }

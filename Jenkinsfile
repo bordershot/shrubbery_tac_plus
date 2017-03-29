@@ -4,7 +4,7 @@ node{
     sh 'echo "RUN yum install -y gcc bison flex m4 pam-devel tcp-wrappers tcp_wrappers-devel" >> Dockerfile'
   }
   def buildcontainer = docker.build('fpm', '-f Dockerfile .').inside {
-    stage 'download' {
+    stage('download') {
       git url: 'git@github.com:bordershot/shrubbery_tac_plus.git'
     }
     stage('build') {

@@ -23,7 +23,7 @@ for (x in os_to_build) {
           if(osmap[OS]['packaging'] == 'rpm') {
             sh 'yum -y install gcc bison flex m4 pam-devel tcp_wrappers tcp_wrappers-devel'
           } else {
-            sh 'apt-get update; apt-get install -y gcc bison flex m4 libpam0g-dev libwrap0 libwrap0-dev
+            sh 'apt-get update; apt-get install -y gcc bison flex m4 libpam0g-dev libwrap0 libwrap0-dev'
           }
         }
         stage('download') {

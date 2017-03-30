@@ -1,12 +1,4 @@
-def osmap = ['Ubuntu1604':['packaging':'deb', 'init':'systemd', 'build_env':'', 'build_deps':'', 'install_deps':[], test_env:[]], 
-             'Ubuntu1404':'Ubuntu-1404-server/Ubuntu-1404-server0-000002.vmdk',
-             'Fedora25':['packaging':'rpm', 'init':'systemd', 'build_env':'fwd-fedora-25:latest',
-                        'build_deps':'gcc bison flex m4 pam-devel tcp_wrappers tcp_wrappers-devel',
-                        'install_deps':['pam-devel', 'tcp_wrappers'], test_env:'fedora:25'],
-             'Fedora24':['packaging':'rpm', 'init':'systemd', 'build_env':'fwd-fedora-24:latest',
-                        'build_deps':'gcc bison flex m4 pam-devel tcp_wrappers tcp_wrappers-devel',
-                        'install_deps':['pam-devel', 'tcp_wrappers'], test_env:'fedora:24'],
-             'CentOS7':['packaging':'rpm', 'init':'systemd', 'build_env':'fwd-centos-7:latest', 
+def osmap = ['CentOS7':['packaging':'rpm', 'init':'systemd', 'build_env':'fwd-centos-7:latest', 
                         'build_deps':'gcc bison flex m4 pam-devel tcp_wrappers tcp_wrappers-devel', 
                         'install_deps':['pam-devel', 'tcp_wrappers'], test_env:'centos:7'],
              'CentOS6':['packaging':'rpm', 'init':'sysv', 'build_env':'fwd-centos-6:latest',
@@ -14,8 +6,8 @@ def osmap = ['Ubuntu1604':['packaging':'deb', 'init':'systemd', 'build_env':'', 
                         'install_deps':['pam-devel', 'tcp_wrappers'], test_env:'centos:6']
             ]
 
-osmap.each { key, value ->
-  env.build_env = value['build_env']
+for (int i=0; i < osmap.count; i++) {
+  env.build_env = osmap[i]['build_env']
   node{
     docker.image('alanfranz/${build_env}').inside('-u 0') {
       stage('setup_env') {

@@ -32,6 +32,7 @@ for (x in os_to_build) {
           git url: 'git@github.com:bordershot/shrubbery_tac_plus.git'
         }
         stage('build') {
+          sh "rm -rf $WORKSPACE/fpm-build-${OS} || true"
           sh "mkdir $WORKSPACE/fpm-build-${OS}"
           sh 'if [ -d "dist" ]; then [ -d "dist/default" ] && rsync -a dist/default/ $OUTPUT_DIR; fi'
           if(osmap[OS]['init'] == 'systemd') {

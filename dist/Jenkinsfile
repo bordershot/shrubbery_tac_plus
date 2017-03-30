@@ -12,6 +12,7 @@ for (x in oslist) {
   def OS = x
   branches[OS] = {
     node {
+      echo osmap[OS]['build_env'].value
       docker.image("#{osmap[OS]['build_env']}").inside('-u 0') {
         stage('setup_env') {
           sh 'yum -y install gcc bison flex m4 pam-devel tcp_wrappers tcp_wrappers-devel'

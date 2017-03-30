@@ -16,11 +16,10 @@ def osmap = ['Ubuntu1604':['packaging':'deb', 'init':'systemd', 'build_env':'', 
 
 
 node{
-  stage('setup_env') {
-    sh 'echo "FROM alanfranz/fwd-centos-7:latest" > Dockerfile'
-    sh 'echo "RUN yum install -y gcc bison flex m4 pam-devel tcp_wrappers tcp_wrappers-devel" >> Dockerfile'
-  }
-  def buildcontainer = docker.build('fpm', '-f Dockerfile .').inside {
+  docker.image('fwd-centos-7:latest').inside('-u 0') {
+    stage('setup_env') {
+      sh 'yum -y install gcc bison flex m4 pam-devel tcp_wrappers tcp_wrappers-devel'
+    }
     stage('download') {
       git url: 'git@github.com:bordershot/shrubbery_tac_plus.git'
     }

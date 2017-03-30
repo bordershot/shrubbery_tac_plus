@@ -6,10 +6,12 @@ def osmap = ['CentOS7':['packaging':'rpm', 'init':'systemd', 'build_env':'alanfr
                         'build_deps':'gcc bison flex m4 pam-devel tcp_wrappers tcp_wrappers-devel',
                         'install_deps':['pam-devel', 'tcp_wrappers'], test_env:'centos:6']
             ]
+
 def branches = [:]
 
 for (x in os_to_build) {
   def OS = x
+  env.WORK_DIR = x
   branches[OS] = {
     node {
       echo osmap[OS]['build_env']
@@ -21,13 +23,13 @@ for (x in os_to_build) {
           git url: 'git@github.com:bordershot/shrubbery_tac_plus.git'
         }
         stage('build') {
-          sh "mkdir $WORKSPACE/fpm-build-#{OS}"
+          sh 'mkdir $WORKSPACE/fpm-build-$WORK_DIR'
           sh 'if [ -d "dist" ]; then [ -d "dist/default" ] && rsync -a dist/default/ $OUTPUT_DIR; [ -d "dist/systemd" ] && rsync -a dist/systemd/ $OUTPUT_DIR; [ -d "dist/sysv" ] && rsync -a dist/sysv/ $OUTPUT_DIR; fi'
-          sh './configure && make && make install DESTDIR=$WORKSPACE/fpm-build'
+          sh './configure && make && make install DESTDIR=$WORKSPACE/fpm-build-$WORK_DIR'
         }
         stage('package') {
-          sh 'fpm -f -t rpm -s dir -n tacacs --version 1.0 --description "DD TacPlus" --depends pam-devel --depends tcp_wrappers -C $WORKSPACE/fpm-build .'
-          sh 'rm -rf $WORKSPACE/fpm-build'
+          sh 'fpm -f -t rpm -s dir -n tacacs --version 1.0 --description "DD TacPlus" --depends pam-devel --depends tcp_wrappers -C $WORKSPACE/fpm-build-$WORK_DIR .'
+          sh 'rm -rf $WORKSPACE/fpm-build-$WORK_DIR'
         }
       }
       stage('test') {

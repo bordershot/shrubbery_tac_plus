@@ -1,4 +1,4 @@
-def os_to_build = ['CentOS7', 'CentOS6' ]
+def os_to_build = ['CentOS7', 'CentOS6', 'Ubuntu1604']
 def osmap = ['CentOS7':['packaging':'rpm', 'init':'systemd', 'build_env':'alanfranz/fwd-centos-7:latest', 
                         'build_deps':['gcc', 'bison', 'flex', 'm4', 'pam-devel', 'tcp_wrappers', 'tcp_wrappers-devel'], 
                         'install_deps':[], test_env:'centos:7'],
@@ -14,12 +14,9 @@ def branches = [:]
 
 for (x in os_to_build) {
   def OS = x
-  env.WORK_DIR = x
-  env.build_deps = osmap[OS]['build_deps'].join(' ')
-  env.PACKAGING = osmap[OS]['packaging']
-  env.install_deps = ""
+  def install_deps = ""
   if(osmap[OS]['install_deps']) {
-    env.install_deps = "--depends " + osmap[OS]['install_deps'].join(' --depends ')
+    install_deps = "--depends " + osmap[OS]['install_deps'].join(' --depends ')
   }
   branches[OS] = {
     node {
@@ -28,25 +25,25 @@ for (x in os_to_build) {
           if(osmap[OS]['packaging'] == 'rpm') {
             sh "yum -y install ${osmap[OS]['build_deps'].join(' ')}"
           } else {
-            sh 'apt-get update; apt-get install -y $build_deps'
+            sh 'apt-get update; apt-get install -y ${osmap[OS]['build_deps'].join(' ')}'
           }
         }
         stage('download') {
           git url: 'git@github.com:bordershot/shrubbery_tac_plus.git'
         }
         stage('build') {
-          sh 'mkdir $WORKSPACE/fpm-build-$WORK_DIR'
+          sh "mkdir $WORKSPACE/fpm-build-${OS}"
           sh 'if [ -d "dist" ]; then [ -d "dist/default" ] && rsync -a dist/default/ $OUTPUT_DIR; fi'
           if(osmap[OS]['init'] == 'systemd') {
             sh '[ -d "dist/systemd" ] && rsync -a dist/systemd/ $OUTPUT_DIR'
           } else {
             sh '[ -d "dist/sysv" ] && rsync -a dist/sysv/ $OUTPUT_DIR'
           }
-          sh './configure && make && make install DESTDIR=$WORKSPACE/fpm-build-$WORK_DIR'
+          sh './configure && make && make install DESTDIR=$WORKSPACE/fpm-build-${OS}"
         }
         stage('package') {
-          sh 'fpm -f -t $PACKAGING -s dir -n tacacs --version 1.0 --description "DD TacPlus" $install_deps -C $WORKSPACE/fpm-build-$WORK_DIR .'
-          sh 'rm -rf $WORKSPACE/fpm-build-$WORK_DIR'
+          sh "fpm -f -t ${osmap[OS]['packaging']} -s dir -n tacacs --version 1.0 --description "DD TacPlus" $i{install_deps} -C $WORKSPACE/fpm-build-${OS} ."
+          sh "rm -rf $WORKSPACE/fpm-build-${OS}"
         }
       }
       stage('test') {

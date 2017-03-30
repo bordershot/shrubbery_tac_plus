@@ -14,28 +14,28 @@ def osmap = ['Ubuntu1604':['packaging':'deb', 'init':'systemd', 'build_env':'', 
                         'install_deps':['pam-devel', 'tcp_wrappers'], test_env:'centos:6']
             ]
 
-
-node{
-  docker.image('alanfranz/fwd-centos-7:latest').inside('-u 0') {
-    stage('setup_env') {
-      sh 'yum -y install gcc bison flex m4 pam-devel tcp_wrappers tcp_wrappers-devel'
+  env.current_os = osmap.get('CentOS7')
+  node{
+    docker.image('alanfranz/${current_os['build_env']}').inside('-u 0') {
+      stage('setup_env') {
+        sh 'yum -y install gcc bison flex m4 pam-devel tcp_wrappers tcp_wrappers-devel'
+      }
+      stage('download') {
+        git url: 'git@github.com:bordershot/shrubbery_tac_plus.git'
+      }
+      stage('build') {
+        sh 'mkdir $WORKSPACE/fpm-build'
+        sh 'if [ -d "dist" ]; then [ -d "dist/default" ] && rsync -a dist/default/ $OUTPUT_DIR; [ -d "dist/systemd" ] && rsync -a dist/systemd/ $OUTPUT_DIR; [ -d "dist/sysv" ] && rsync -a dist/sysv/ $OUTPUT_DIR; fi'
+        sh './configure && make && make install DESTDIR=$WORKSPACE/fpm-build'
+      }
+      stage('package') {
+        sh 'fpm -f -t rpm -s dir -n tacacs --version 1.0 --description "DD TacPlus" --depends pam-devel --depends tcp_wrappers -C $WORKSPACE/fpm-build .'
+        sh 'rm -rf $WORKSPACE/fpm-build'
+      }
     }
-    stage('download') {
-      git url: 'git@github.com:bordershot/shrubbery_tac_plus.git'
-    }
-    stage('build') {
-      sh 'mkdir $WORKSPACE/fpm-build'
-      sh 'if [ -d "dist" ]; then [ -d "dist/default" ] && rsync -a dist/default/ $OUTPUT_DIR; [ -d "dist/systemd" ] && rsync -a dist/systemd/ $OUTPUT_DIR; [ -d "dist/sysv" ] && rsync -a dist/sysv/ $OUTPUT_DIR; fi'
-      sh './configure && make && make install DESTDIR=$WORKSPACE/fpm-build'
-    }
-    stage('package') {
-      sh 'fpm -f -t rpm -s dir -n tacacs --version 1.0 --description "DD TacPlus" --depends pam-devel --depends tcp_wrappers -C $WORKSPACE/fpm-build .'
-      sh 'rm -rf $WORKSPACE/fpm-build'
+    stage('test') {
+      docker.image('centos:7').inside('-u 0') {
+        sh 'yum -y install $WORKSPACE/tacacs*.rpm'
+      }
     }
   }
-  stage('test') {
-    docker.image('centos:7').inside('-u 0') {
-      sh 'yum -y install $WORKSPACE/tacacs*.rpm'
-    }
-  }
-}

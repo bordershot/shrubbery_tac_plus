@@ -5,8 +5,9 @@ def osmap = ['CentOS7':['packaging':'rpm', 'init':'systemd', 'build_env':'alanfr
                         'build_deps':'gcc bison flex m4 pam-devel tcp_wrappers tcp_wrappers-devel',
                         'install_deps':['pam-devel', 'tcp_wrappers'], test_env:'centos:6']
             ]
+echo osmap[0]
 for (int i=0; i < osmap.size(); i++) {
-  env.build_env = osmap[i]['build_env']
+  env.build_env = osmap[i]
   echo build_env
   branches = {
   node{

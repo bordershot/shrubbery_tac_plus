@@ -26,7 +26,7 @@ for (x in os_to_build) {
       docker.image(osmap[OS]['build_env']).inside('-u 0') {
         stage('setup_env') {
           if(osmap[OS]['packaging'] == 'rpm') {
-            sh 'yum -y install $build_deps'
+            sh "yum -y install ${osmap[OS]['build_deps'].join(' ')}"
           } else {
             sh 'apt-get update; apt-get install -y $build_deps'
           }

@@ -1,15 +1,15 @@
-def osmap = ['CentOS7':['packaging':'rpm', 'init':'systemd', 'build_env':'fwd-centos-7:latest', 
+def osmap = ['CentOS7':['packaging':'rpm', 'init':'systemd', 'build_env':'alanfranz/fwd-centos-7:latest', 
                         'build_deps':'gcc bison flex m4 pam-devel tcp_wrappers tcp_wrappers-devel', 
                         'install_deps':['pam-devel', 'tcp_wrappers'], test_env:'centos:7'],
-             'CentOS6':['packaging':'rpm', 'init':'sysv', 'build_env':'fwd-centos-6:latest',
+             'CentOS6':['packaging':'rpm', 'init':'sysv', 'build_env':'alanfranz/fwd-centos-6:latest',
                         'build_deps':'gcc bison flex m4 pam-devel tcp_wrappers tcp_wrappers-devel',
                         'install_deps':['pam-devel', 'tcp_wrappers'], test_env:'centos:6']
             ]
 for (OS in osmap) {
-  env.build_env = OS.value.build_env.string()
+  env.build_env = OS.value.build_env
   echo build_env
   node{
-    docker.image("alanfranz/${build_env}").inside('-u 0') {
+    docker.image(build_env).inside('-u 0') {
       stage('setup_env') {
         sh 'yum -y install gcc bison flex m4 pam-devel tcp_wrappers tcp_wrappers-devel'
       }

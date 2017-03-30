@@ -5,10 +5,10 @@ def osmap = ['CentOS7':['packaging':'rpm', 'init':'systemd', 'build_env':'alanfr
                         'build_deps':'gcc bison flex m4 pam-devel tcp_wrappers tcp_wrappers-devel',
                         'install_deps':['pam-devel', 'tcp_wrappers'], test_env:'centos:6']
             ]
-for (OS in osmap) {
+for (int i=0; i < osmap.size(); i++) {
   env.build_env = OS.value.build_env
   echo build_env
-  OS = null
+  branches = {
   node{
     docker.image('alanfranz/fwd-centos-7:latest').inside('-u 0') {
       stage('setup_env') {
@@ -33,4 +33,6 @@ for (OS in osmap) {
       }
     }
   }
+  }
 }
+parallel branches

@@ -5,7 +5,7 @@ def osmap = ['CentOS7':['packaging':'rpm', 'init':'systemd', 'build_env':'alanfr
              'CentOS6':['packaging':'rpm', 'init':'sysv', 'build_env':'alanfranz/fwd-centos-6:latest',
                         'build_deps':['gcc', 'bison', 'flex', 'm4', 'pam-devel', 'tcp_wrappers', 'tcp_wrappers-devel'],
                         'install_deps':['pam-devel', 'tcp_wrappers'], test_env:'centos:6'],
-             'Ubuntu1604':['packaging':'deb', 'init':'systemd', 'build_env':'alanfranz/fwd-ubuntu:xenial',
+             'Ubuntu1604':['packaging':'deb', 'init':'systemd', 'build_env':'alanfranz/fwd-ubuntu-xenial:latest',
                         'build_deps':['gcc', 'bison', 'flex', 'm4', 'libpam0g-dev', 'libwrap0', 'libwrap0-dev'],
                         'install_deps':['libpam0g-dev', 'libwrap0'], test_env:'ubuntu:xenial'],
             ]
@@ -42,7 +42,7 @@ for (x in os_to_build) {
           sh "./configure && make && make install DESTDIR=$WORKSPACE/fpm-build-${OS}"
         }
         stage('package') {
-          sh "fpm -f -t ${osmap[OS]['packaging']} -s dir -n tacacs --version 1.0 --description "DD TacPlus" $i{install_deps} -C $WORKSPACE/fpm-build-${OS} ."
+          sh "fpm -f -t ${osmap[OS]['packaging']} -s dir -n tacacs --version 1.0 --description "DD TacPlus" ${install_deps} -C $WORKSPACE/fpm-build-${OS} ."
           sh "rm -rf $WORKSPACE/fpm-build-${OS}"
         }
       }

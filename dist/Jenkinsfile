@@ -17,9 +17,9 @@ for (x in os_to_build) {
   env.WORK_DIR = x
   env.build_deps = osmap[OS]['build_deps'].join(' ')
   env.PACKAGING = osmap[OS]['packaging']
+  env.install_deps = osmap[OS]['install_deps'].join(' --depends ')
   branches[OS] = {
     node {
-      echo osmap[OS]['build_env']
       docker.image(osmap[OS]['build_env']).inside('-u 0') {
         stage('setup_env') {
           if(osmap[OS]['packaging'] == 'rpm') {
@@ -42,12 +42,12 @@ for (x in os_to_build) {
           sh './configure && make && make install DESTDIR=$WORKSPACE/fpm-build-$WORK_DIR'
         }
         stage('package') {
-          sh 'fpm -f -t $PACKAGING -s dir -n tacacs --version 1.0 --description "DD TacPlus" --depends pam-devel --depends tcp_wrappers -C $WORKSPACE/fpm-build-$WORK_DIR .'
+          sh 'fpm -f -t $PACKAGING -s dir -n tacacs --version 1.0 --description "DD TacPlus" --depends $install_deps -C $WORKSPACE/fpm-build-$WORK_DIR .'
           sh 'rm -rf $WORKSPACE/fpm-build-$WORK_DIR'
         }
       }
       stage('test') {
-        docker.image('centos:7').inside('-u 0') {
+        docker.image(osmap[OS]['test_env']).inside('-u 0') {
           sh 'yum -y install $WORKSPACE/tacacs*.rpm'
         }
       }

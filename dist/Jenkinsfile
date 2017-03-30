@@ -1,3 +1,4 @@
+def oslist = ['CentOS7', 'CentOS6' ]
 def osmap = ['CentOS7':['packaging':'rpm', 'init':'systemd', 'build_env':'alanfranz/fwd-centos-7:latest', 
                         'build_deps':'gcc bison flex m4 pam-devel tcp_wrappers tcp_wrappers-devel', 
                         'install_deps':['pam-devel', 'tcp_wrappers'], test_env:'centos:7'],
@@ -7,7 +8,7 @@ def osmap = ['CentOS7':['packaging':'rpm', 'init':'systemd', 'build_env':'alanfr
             ]
 def branches = [:]
 
-for (x in osmap) {
+for (x in oslist) {
   def OS = x.key
   branches[OS] = {
     node {

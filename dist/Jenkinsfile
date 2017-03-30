@@ -17,7 +17,10 @@ for (x in os_to_build) {
   env.WORK_DIR = x
   env.build_deps = osmap[OS]['build_deps'].join(' ')
   env.PACKAGING = osmap[OS]['packaging']
-  env.install_deps = osmap[OS]['install_deps'].join(' --depends ')
+  env.install_deps = ""
+  if(osmap[OS]['install_deps'].size > 0) {
+    env.install_deps = "--depends " + osmap[OS]['install_deps'].join(' --depends ')
+  }
   branches[OS] = {
     node {
       docker.image(osmap[OS]['build_env']).inside('-u 0') {
@@ -42,7 +45,7 @@ for (x in os_to_build) {
           sh './configure && make && make install DESTDIR=$WORKSPACE/fpm-build-$WORK_DIR'
         }
         stage('package') {
-          sh 'fpm -f -t $PACKAGING -s dir -n tacacs --version 1.0 --description "DD TacPlus" --depends $install_deps -C $WORKSPACE/fpm-build-$WORK_DIR .'
+          sh 'fpm -f -t $PACKAGING -s dir -n tacacs --version 1.0 --description "DD TacPlus" $install_deps -C $WORKSPACE/fpm-build-$WORK_DIR .'
           sh 'rm -rf $WORKSPACE/fpm-build-$WORK_DIR'
         }
       }

@@ -7,36 +7,41 @@ def osmap = ['CentOS7':['packaging':'rpm', 'init':'systemd', 'build_env':'alanfr
             ]
 def branches = [:]
 
+def build_docker(String dist) {
+  cmd = {
+    node{
+      docker.image('alanfranz/fwd-centos-7:latest').inside('-u 0') {
+        stage('setup_env') {
+          sh 'yum -y install gcc bison flex m4 pam-devel tcp_wrappers tcp_wrappers-devel'
+        }
+        stage('download') {
+          git url: 'git@github.com:bordershot/shrubbery_tac_plus.git'
+        }
+        stage('build') {
+          sh 'mkdir $WORKSPACE/fpm-build'
+          sh 'if [ -d "dist" ]; then [ -d "dist/default" ] && rsync -a dist/default/ $OUTPUT_DIR; [ -d "dist/systemd" ] && rsync -a dist/systemd/ $OUTPUT_DIR; [ -d "dist/sysv" ] && rsync -a dist/sysv/ $OUTPUT_DIR; fi'
+          sh './configure && make && make install DESTDIR=$WORKSPACE/fpm-build'
+        }
+        stage('package') {
+          sh 'fpm -f -t rpm -s dir -n tacacs --version 1.0 --description "DD TacPlus" --depends pam-devel --depends tcp_wrappers -C $WORKSPACE/fpm-build .'
+          sh 'rm -rf $WORKSPACE/fpm-build'
+        }
+      }
+      stage('test') {
+        docker.image('centos:7').inside('-u 0') {
+          sh 'yum -y install $WORKSPACE/tacacs*.rpm'
+        }
+      }
+    }
+  }
+  return cmd
+}
+
 for (OS in osmap) {
   env.build_env = OS.value.build_env
   echo build_env
   OS_name = OS.key
   OS = null
-  branches["${OS_name}"] = {
-  node{
-    docker.image('alanfranz/fwd-centos-7:latest').inside('-u 0') {
-      stage('setup_env') {
-        sh 'yum -y install gcc bison flex m4 pam-devel tcp_wrappers tcp_wrappers-devel'
-      }
-      stage('download') {
-        git url: 'git@github.com:bordershot/shrubbery_tac_plus.git'
-      }
-      stage('build') {
-        sh 'mkdir $WORKSPACE/fpm-build'
-        sh 'if [ -d "dist" ]; then [ -d "dist/default" ] && rsync -a dist/default/ $OUTPUT_DIR; [ -d "dist/systemd" ] && rsync -a dist/systemd/ $OUTPUT_DIR; [ -d "dist/sysv" ] && rsync -a dist/sysv/ $OUTPUT_DIR; fi'
-        sh './configure && make && make install DESTDIR=$WORKSPACE/fpm-build'
-      }
-      stage('package') {
-        sh 'fpm -f -t rpm -s dir -n tacacs --version 1.0 --description "DD TacPlus" --depends pam-devel --depends tcp_wrappers -C $WORKSPACE/fpm-build .'
-        sh 'rm -rf $WORKSPACE/fpm-build'
-      }
-    }
-    stage('test') {
-      docker.image('centos:7').inside('-u 0') {
-        sh 'yum -y install $WORKSPACE/tacacs*.rpm'
-      }
-    }
-  }
-  }
+  branches["${OS_name}"] = build_docker("${OS_name}")
 }
 parallel branches

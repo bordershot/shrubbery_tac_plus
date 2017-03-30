@@ -36,6 +36,5 @@ for (OS in osmap) {
     }
   }
   }
-OS=null
 }
 parallel branches

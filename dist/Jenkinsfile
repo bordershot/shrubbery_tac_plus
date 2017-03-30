@@ -5,9 +5,8 @@ def osmap = ['CentOS7':['packaging':'rpm', 'init':'systemd', 'build_env':'fwd-ce
                         'build_deps':'gcc bison flex m4 pam-devel tcp_wrappers tcp_wrappers-devel',
                         'install_deps':['pam-devel', 'tcp_wrappers'], test_env:'centos:6']
             ]
-echo osmap[1]
-for (i=0; i < osmap.size(); i++) {
-  env.build_env = osmap[i].get('build_env')
+for (OS in osmap) {
+  env.build_env = OS.value.build_env
   echo build_env
   node{
     docker.image("alanfranz/${build_env}").inside('-u 0') {

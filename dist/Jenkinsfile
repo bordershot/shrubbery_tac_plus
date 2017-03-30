@@ -39,7 +39,7 @@ for (x in os_to_build) {
           } else {
             sh '[ -d "dist/sysv" ] && rsync -a dist/sysv/ $OUTPUT_DIR'
           }
-          sh './configure && make && make install DESTDIR=$WORKSPACE/fpm-build-${OS}"
+          sh "./configure && make && make install DESTDIR=$WORKSPACE/fpm-build-${OS}"
         }
         stage('package') {
           sh "fpm -f -t ${osmap[OS]['packaging']} -s dir -n tacacs --version 1.0 --description "DD TacPlus" $i{install_deps} -C $WORKSPACE/fpm-build-${OS} ."

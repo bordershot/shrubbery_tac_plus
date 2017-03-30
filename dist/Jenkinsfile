@@ -1,4 +1,4 @@
-def oslist = ['CentOS7', 'CentOS6' ]
+def os_to_build = ['CentOS7', 'CentOS6' ]
 def osmap = ['CentOS7':['packaging':'rpm', 'init':'systemd', 'build_env':'alanfranz/fwd-centos-7:latest', 
                         'build_deps':'gcc bison flex m4 pam-devel tcp_wrappers tcp_wrappers-devel', 
                         'install_deps':['pam-devel', 'tcp_wrappers'], test_env:'centos:7'],
@@ -8,7 +8,7 @@ def osmap = ['CentOS7':['packaging':'rpm', 'init':'systemd', 'build_env':'alanfr
             ]
 def branches = [:]
 
-for (x in oslist) {
+for (x in os_to_build) {
   def OS = x
   branches[OS] = {
     node {
@@ -21,7 +21,7 @@ for (x in oslist) {
           git url: 'git@github.com:bordershot/shrubbery_tac_plus.git'
         }
         stage('build') {
-          sh 'mkdir $WORKSPACE/fpm-buildi-$OS'
+          sh "mkdir $WORKSPACE/fpm-build-#{OS}"
           sh 'if [ -d "dist" ]; then [ -d "dist/default" ] && rsync -a dist/default/ $OUTPUT_DIR; [ -d "dist/systemd" ] && rsync -a dist/systemd/ $OUTPUT_DIR; [ -d "dist/sysv" ] && rsync -a dist/sysv/ $OUTPUT_DIR; fi'
           sh './configure && make && make install DESTDIR=$WORKSPACE/fpm-build'
         }

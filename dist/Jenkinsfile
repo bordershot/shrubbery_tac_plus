@@ -15,15 +15,16 @@ def branches = [:]
 for (x in os_to_build) {
   def OS = x
   env.WORK_DIR = x
+  env.build_deps = osmap[OS]['build_deps'].join(' ')
   branches[OS] = {
     node {
       echo osmap[OS]['build_env']
       docker.image(osmap[OS]['build_env']).inside('-u 0') {
         stage('setup_env') {
           if(osmap[OS]['packaging'] == 'rpm') {
-            sh 'yum -y install gcc bison flex m4 pam-devel tcp_wrappers tcp_wrappers-devel'
+            sh 'yum -y install $build_deps'
           } else {
-            sh 'apt-get update; apt-get install -y gcc bison flex m4 libpam0g-dev libwrap0 libwrap0-dev'
+            sh 'apt-get update; apt-get install -y $build_deps'
           }
         }
         stage('download') {

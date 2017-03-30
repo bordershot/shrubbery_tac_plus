@@ -16,6 +16,7 @@ for (x in os_to_build) {
   def OS = x
   env.WORK_DIR = x
   env.build_deps = osmap[OS]['build_deps'].join(' ')
+  env.PACKAGING = osmap[OS]['packaging']
   branches[OS] = {
     node {
       echo osmap[OS]['build_env']
@@ -32,11 +33,16 @@ for (x in os_to_build) {
         }
         stage('build') {
           sh 'mkdir $WORKSPACE/fpm-build-$WORK_DIR'
-          sh 'if [ -d "dist" ]; then [ -d "dist/default" ] && rsync -a dist/default/ $OUTPUT_DIR; [ -d "dist/systemd" ] && rsync -a dist/systemd/ $OUTPUT_DIR; [ -d "dist/sysv" ] && rsync -a dist/sysv/ $OUTPUT_DIR; fi'
+          sh 'if [ -d "dist" ]; then [ -d "dist/default" ] && rsync -a dist/default/ $OUTPUT_DIR; fi'
+          if(osmap[OS]['init'] == 'systemd') {
+            sh '[ -d "dist/systemd" ] && rsync -a dist/systemd/ $OUTPUT_DIR'
+          } else {
+            sh '[ -d "dist/sysv" ] && rsync -a dist/sysv/ $OUTPUT_DIR'
+          }
           sh './configure && make && make install DESTDIR=$WORKSPACE/fpm-build-$WORK_DIR'
         }
         stage('package') {
-          sh 'fpm -f -t rpm -s dir -n tacacs --version 1.0 --description "DD TacPlus" --depends pam-devel --depends tcp_wrappers -C $WORKSPACE/fpm-build-$WORK_DIR .'
+          sh 'fpm -f -t $PACKAGING -s dir -n tacacs --version 1.0 --description "DD TacPlus" --depends pam-devel --depends tcp_wrappers -C $WORKSPACE/fpm-build-$WORK_DIR .'
           sh 'rm -rf $WORKSPACE/fpm-build-$WORK_DIR'
         }
       }

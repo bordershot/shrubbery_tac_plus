@@ -14,7 +14,7 @@ def osmap = ['Ubuntu1604':['packaging':'deb', 'init':'systemd', 'build_env':'', 
                         'install_deps':['pam-devel', 'tcp_wrappers'], test_env:'centos:6']
             ]
 
-  env.current_os = osmap.get('CentOS7')
+  env.build_os = osmap['CentOS7']['build_env']
   node{
     docker.image('alanfranz/${current_os.build_env}').inside('-u 0') {
       stage('setup_env') {

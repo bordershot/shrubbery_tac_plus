@@ -37,11 +37,8 @@ def build_docker(String dist) {
   return cmd
 }
 
-for (OS in osmap) {
-  env.build_env = OS.value.build_env
-  echo build_env
-  OS_name = OS.key
-  OS = null
-  branches["${OS_name}"] = build_docker("${OS_name}")
+for (int i = 0; i < osmap.size(); i++) {
+  echo osmap[i].value
+  branches[osmap[i].value] = build_docker(osmap[i].value)
 }
 parallel branches

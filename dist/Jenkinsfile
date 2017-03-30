@@ -43,7 +43,7 @@ for (x in os_to_build) {
           sh "./configure && make && make install DESTDIR=$WORKSPACE/fpm-build-${OS}"
         }
         stage('package') {
-          sh "fpm -f -t ${osmap[OS]['packaging']} -s dir -n tacacs --version 1.0 --description "DD TacPlus" ${install_deps} -C $WORKSPACE/fpm-build-${OS} ."
+          sh "fpm -f -t ${osmap[OS]['packaging']} -s dir -n tacacs --version 1.0 --description \"DD TacPlus\" ${install_deps} -C $WORKSPACE/fpm-build-${OS} ."
           sh "rm -rf $WORKSPACE/fpm-build-${OS}"
         }
       }

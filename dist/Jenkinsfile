@@ -8,7 +8,7 @@ def osmap = ['CentOS7':['packaging':'rpm', 'init':'systemd', 'build_env':'alanfr
 for (OS in osmap) {
   env.build_env = OS.value.build_env
   echo build_env
-  branches = {
+  branches["${OS}"] = {
   node{
     docker.image('alanfranz/fwd-centos-7:latest').inside('-u 0') {
       stage('setup_env') {

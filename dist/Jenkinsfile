@@ -38,7 +38,7 @@ def build_docker(String dist) {
 }
 
 for (int i = 0; i < osmap.size(); i++) {
-  echo osmap['i'].value
+  echo osmap.findIndexOf{it.key=="CentOS7"}
   branches[osmap['i'].value] = build_docker(osmap['i'].value)
 }
 parallel branches

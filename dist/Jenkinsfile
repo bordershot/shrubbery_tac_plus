@@ -14,9 +14,10 @@ def osmap = ['Ubuntu1604':['packaging':'deb', 'init':'systemd', 'build_env':'', 
                         'install_deps':['pam-devel', 'tcp_wrappers'], test_env:'centos:6']
             ]
 
-  env.build_os = osmap['CentOS7']
+osmap.each { key, value ->
+  env.build_env = value['build_env']
   node{
-    docker.image('alanfranz/${build_os['build_env']}').inside('-u 0') {
+    docker.image('alanfranz/${build_env}').inside('-u 0') {
       stage('setup_env') {
         sh 'yum -y install gcc bison flex m4 pam-devel tcp_wrappers tcp_wrappers-devel'
       }
@@ -39,3 +40,4 @@ def osmap = ['Ubuntu1604':['packaging':'deb', 'init':'systemd', 'build_env':'', 
       }
     }
   }
+}

@@ -7,9 +7,10 @@ def osmap = ['CentOS7':['packaging':'rpm', 'init':'systemd', 'build_env':'alanfr
             ]
 def branches = [:]
 
-def build_docker(String dist) {
-  cmd = {
-    node{
+for (x in osmap) {
+  def OS = x
+  branches[OS] = {
+    node(OS) {
       docker.image('alanfranz/fwd-centos-7:latest').inside('-u 0') {
         stage('setup_env') {
           sh 'yum -y install gcc bison flex m4 pam-devel tcp_wrappers tcp_wrappers-devel'
@@ -34,11 +35,6 @@ def build_docker(String dist) {
       }
     }
   }
-  return cmd
 }
 
-for (int i = 0; i < osmap.size(); i++) {
-  echo osmap.findIndexOf{it.key=="CentOS7"}
-  branches[osmap['i'].value] = build_docker(osmap['i'].value)
-}
 parallel branches

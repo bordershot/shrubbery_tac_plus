@@ -49,7 +49,7 @@ for (x in os_to_build) {
         }
       }
       stage('test') {
-        docker.withServer(tcp://192.168.37.167:2377).image(osmap[OS]['test_env']).inside('-u 0') {
+        docker.image(osmap[OS]['test_env']).inside('-u 0') {
           if(osmap[OS]['packaging'] == 'rpm') {
             sh "yum -y install $WORKSPACE/${package_name}*.rpm"
           } else {

@@ -1,7 +1,8 @@
+def package_name = 'tac_plus'
 def os_to_build = ['CentOS7', 'CentOS6', 'Ubuntu1604']
 def osmap = ['CentOS7':['packaging':'rpm', 'init':'systemd', 'build_env':'alanfranz/fwd-centos-7:latest', 
                         'build_deps':['gcc', 'bison', 'flex', 'm4', 'pam-devel', 'tcp_wrappers', 'tcp_wrappers-devel'], 
-                        'install_deps':[], test_env:'centos:7'],
+                        'install_deps':['pam-devel', 'tcp_wrappers'], test_env:'centos:7'],
              'CentOS6':['packaging':'rpm', 'init':'sysv', 'build_env':'alanfranz/fwd-centos-6:latest',
                         'build_deps':['gcc', 'bison', 'flex', 'm4', 'pam-devel', 'tcp_wrappers', 'tcp_wrappers-devel'],
                         'install_deps':['pam-devel', 'tcp_wrappers'], test_env:'centos:6'],
@@ -43,18 +44,21 @@ for (x in os_to_build) {
           sh "./configure && make && make install DESTDIR=$WORKSPACE/fpm-build-${OS}"
         }
         stage('package') {
-          sh "fpm -f -t ${osmap[OS]['packaging']} -s dir -n tacacs --version 1.0 --description \"DD TacPlus\" ${install_deps} -C $WORKSPACE/fpm-build-${OS} ."
+          sh "fpm -f -t ${osmap[OS]['packaging']} -s dir -n ${package_name} --version 1.0 --description \"DD TacPlus\" ${install_deps} -C $WORKSPACE/fpm-build-${OS} ."
           sh "rm -rf $WORKSPACE/fpm-build-${OS}"
         }
       }
       stage('test') {
         docker.image(osmap[OS]['test_env']).inside('-u 0') {
           if(osmap[OS]['packaging'] == 'rpm') {
-            sh 'yum -y install $WORKSPACE/tacacs*.rpm'
+            sh 'yum -y install $WORKSPACE/${package_name}*.rpm'
           } else {
-            sh 'apt-get update; dpkg -i $WORKSPACE/tacacs*.deb || /bin/true; apt-get -f -y install'
+            sh 'apt-get update; dpkg -i $WORKSPACE/${package_name}*.deb || /bin/true; apt-get -f -y install'
           }
         }
+      }
+      stage('publish') {
+        archiveArtifacts("${package_name}*.${osmap[OS]['packaging']}")
       }
     }
   }

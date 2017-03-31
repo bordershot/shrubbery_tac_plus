@@ -25,7 +25,7 @@ for (x in os_to_build) {
           if(osmap[OS]['packaging'] == 'rpm') {
             sh "yum -y install ${osmap[OS]['build_deps'].join(' ')}"
           } else {
-            sh 'apt-get update; apt-get install -y ${osmap[OS]['build_deps'].join(' ')}'
+            sh "apt-get update; apt-get install -y ${osmap[OS]['build_deps'].join(' ')}"
           }
         }
         stage('download') {

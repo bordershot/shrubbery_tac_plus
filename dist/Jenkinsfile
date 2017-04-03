@@ -36,8 +36,8 @@ for (x in os_to_build) {
         stage('build') {
           sh "rm -rf $WORKSPACE/fpm-build-${OS} || true"
           sh "mkdir $WORKSPACE/fpm-build-${OS}"
-          sh "rm -rf $WORKSPACE/fpm-build-${OS}/out || true"
-          sh "mkdir $WORKSPACE/fpm-build-${OS}/out"
+          sh "rm -rf $WORKSPACE/out || true"
+          sh "mkdir $WORKSPACE/out"
           sh 'if [ -d "dist" ]; then [ -d "dist/default" ] && rsync -a dist/default/ $OUTPUT_DIR; fi'
           if(osmap[OS]['init'] == 'systemd') {
             sh '[ -d "dist/systemd" ] && rsync -a dist/systemd/ $OUTPUT_DIR'

@@ -1,21 +1,25 @@
 def package_name = 'tacplus'
 def os_to_build = ['CentOS7', 'CentOS6', 'Ubuntu1604']
-def rpm_version = "4.0.4.28-${BUILD_NUMBER}"
-def osmap = ['CentOS7':['packaging':'rpm', 'init':'systemd', 'build_env':'alanfranz/fwd-centos-7:latest', 
+def version_number = "4.0.4.28"
+def osmap = ['CentOS7':['packaging':'rpm', 'init':'systemd', 'distro':'el7', 
+                        'build_env':'alanfranz/fwd-centos-7:latest', 
                         'build_deps':['gcc', 'bison', 'flex', 'm4', 'pam-devel', 'tcp_wrappers', 'tcp_wrappers-devel'], 
                         'install_deps':['pam-devel', 'tcp_wrappers'], test_env:'centos:7'],
-             'CentOS6':['packaging':'rpm', 'init':'sysv', 'build_env':'alanfranz/fwd-centos-6:latest',
+             'CentOS6':['packaging':'rpm', 'init':'sysv', 'distro':'el6', 
+                        'build_env':'alanfranz/fwd-centos-6:latest',
                         'build_deps':['gcc', 'bison', 'flex', 'm4', 'pam-devel', 'tcp_wrappers', 'tcp_wrappers-devel'],
                         'install_deps':['pam-devel', 'tcp_wrappers'], test_env:'centos:6'],
-             'Ubuntu1604':['packaging':'deb', 'init':'systemd', 'build_env':'alanfranz/fwd-ubuntu-xenial:latest',
-                        'build_deps':['gcc', 'bison', 'flex', 'm4', 'libpam0g-dev', 'libwrap0', 'libwrap0-dev'],
-                        'install_deps':['libpam0g-dev', 'libwrap0'], test_env:'ubuntu:xenial'],
+             'Ubuntu1604':['packaging':'deb', 'init':'systemd', 'distro':'ubu1604', 
+                           'build_env':'alanfranz/fwd-ubuntu-xenial:latest',
+                           'build_deps':['gcc', 'bison', 'flex', 'm4', 'libpam0g-dev', 'libwrap0', 'libwrap0-dev'],
+                           'install_deps':['libpam0g-dev', 'libwrap0'], test_env:'ubuntu:xenial'],
             ]
 
 def branches = [:]
 
 for (x in os_to_build) {
   def OS = x
+  def rpm_version = "${version_number}-${BUILD_NUMBER}.${osmap[OS]['distro']}"
   def install_deps = ""
   if(osmap[OS]['install_deps']) {
     install_deps = "--depends " + osmap[OS]['install_deps'].join(' --depends ')

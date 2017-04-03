@@ -65,7 +65,7 @@ for (x in os_to_build) {
         }
       }
       stage('publish') {
-        archiveArtifacts("${WORKSPACE}/out/${package_name}*.${osmap[OS]['packaging']}")
+        archiveArtifacts("out/${package_name}*.${osmap[OS]['packaging']}")
       }
     }
   }

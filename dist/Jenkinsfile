@@ -1,6 +1,6 @@
 def package_name = 'tacplus'
 def os_to_build = ['CentOS7', 'CentOS6', 'Ubuntu1604']
-def rpm_version = "4.0.4.28-dd${BUILD_NUM}"
+def rpm_version = "4.0.4.28-dd${BUILD_NUMBER}"
 def osmap = ['CentOS7':['packaging':'rpm', 'init':'systemd', 'build_env':'alanfranz/fwd-centos-7:latest', 
                         'build_deps':['gcc', 'bison', 'flex', 'm4', 'pam-devel', 'tcp_wrappers', 'tcp_wrappers-devel'], 
                         'install_deps':['pam-devel', 'tcp_wrappers'], test_env:'centos:7'],

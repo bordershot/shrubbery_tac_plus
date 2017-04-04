@@ -1,5 +1,5 @@
 def package_name = 'tacplus'
-def os_to_build = ['Ubuntu1604', 'Ubuntu1404']
+def os_to_build = ['Ubuntu1604', 'Ubuntu1404', 'CentOS6', 'CentOS7']
 def version_number = "4.0.4.28"
 def osmap = ['CentOS7':['packaging':'rpm', 'init':'systemd', 'distro':'el7', 
                         'build_env':'alanfranz/fwd-centos-7:latest', 

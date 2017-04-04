@@ -38,6 +38,10 @@ for (x in os_to_build) {
   else if (osmap[OS]['init'] == 'sysv' && osmap[OS]['packaging'] == 'deb') {
     deb_systemd = "--deb-init ../dist/sysv/etc/rc.d/init.d/tac_plus"
   }
+  def deb_dist = ""
+  if(osmap[OS]['packaging'] == 'deb') {
+    deb_dist = "-${osmap[OS]['distro']}"
+  }
   branches[OS] = {
     node {
       docker.image(osmap[OS]['build_env']).inside('-u 0') {
@@ -65,7 +69,7 @@ for (x in os_to_build) {
           sh "./configure && make && make install DESTDIR=$WORKSPACE/fpm-build-${OS}"
         }
         stage('package') {
-          sh "cd $WORKSPACE/out; fpm -f -t ${osmap[OS]['packaging']} -s dir -n ${package_name} --version ${version_number} --iteration ${BUILD_NUMBER} ${rpm_dist}${deb_systemd} --description \"DD TacPlus\" ${install_deps} -C $WORKSPACE/fpm-build-${OS} ."
+          sh "cd $WORKSPACE/out; fpm -f -t ${osmap[OS]['packaging']}${deb_dist} -s dir -n ${package_name} --version ${version_number} --iteration ${BUILD_NUMBER} ${rpm_dist}${deb_systemd} --description \"DD TacPlus\" ${install_deps} -C $WORKSPACE/fpm-build-${OS} ."
           sh "rm -rf $WORKSPACE/fpm-build-${OS}"
         }
       }

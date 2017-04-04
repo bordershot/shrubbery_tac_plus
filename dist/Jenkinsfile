@@ -29,7 +29,7 @@ for (x in os_to_build) {
   }
   def deb_systemd = ""
   if(osmap[OS]['init'] == 'systemd' && osmap[OS]['packaging'] == 'deb') {
-    deb_systemd = "--deb-systemd dist/systemd"
+    deb_systemd = "--deb-systemd ${WORKSPACE}/dist/systemd"
   }
   else if (osmap[OS]['init'] == 'sysv' && osmap[OS]['packaging'] == 'deb') {
     deb_systemd = "--deb-init dist/sysv"

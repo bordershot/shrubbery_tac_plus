@@ -1,5 +1,5 @@
 def package_name = 'tacplus'
-def os_to_build = ['CentOS7', 'CentOS6', 'Ubuntu1604']
+def os_to_build = ['Ubuntu1604', 'Ubuntu1404']
 def version_number = "4.0.4.28"
 def osmap = ['CentOS7':['packaging':'rpm', 'init':'systemd', 'distro':'el7', 
                         'build_env':'alanfranz/fwd-centos-7:latest', 
@@ -9,10 +9,14 @@ def osmap = ['CentOS7':['packaging':'rpm', 'init':'systemd', 'distro':'el7',
                         'build_env':'alanfranz/fwd-centos-6:latest',
                         'build_deps':['gcc', 'bison', 'flex', 'm4', 'pam-devel', 'tcp_wrappers', 'tcp_wrappers-devel'],
                         'install_deps':['pam-devel', 'tcp_wrappers'], test_env:'centos:6'],
-             'Ubuntu1604':['packaging':'deb', 'init':'systemd', 'distro':'ubu1604', 
+             'Ubuntu1604':['packaging':'deb', 'init':'systemd', 'distro':'xenial', 
                            'build_env':'alanfranz/fwd-ubuntu-xenial:latest',
                            'build_deps':['gcc', 'bison', 'flex', 'm4', 'libpam0g-dev', 'libwrap0', 'libwrap0-dev'],
                            'install_deps':['libpam0g-dev', 'libwrap0'], test_env:'ubuntu:xenial'],
+             'Ubuntu1404':['packaging':'deb', 'init':'sysv', 'distro':'trusty',
+                           'build_env':'alanfranz/fwd-ubuntu-trusty:latest',
+                           'build_deps':['gcc', 'bison', 'flex', 'm4', 'libpam0g-dev', 'libwrap0', 'libwrap0-dev'],
+                           'install_deps':['libpam0g-dev', 'libwrap0'], test_env:'ubuntu:trusty'],
             ]
 
 def branches = [:]
@@ -29,10 +33,10 @@ for (x in os_to_build) {
   }
   def deb_systemd = ""
   if(osmap[OS]['init'] == 'systemd' && osmap[OS]['packaging'] == 'deb') {
-    deb_systemd = "--deb-systemd ../dist/systemd"
+    deb_systemd = "--deb-systemd ../dist/systemd/etc/systemd/system/tac_plus.service"
   }
   else if (osmap[OS]['init'] == 'sysv' && osmap[OS]['packaging'] == 'deb') {
-    deb_systemd = "--deb-init ../dist/sysv"
+    deb_systemd = "--deb-init ../dist/sysv/etc/rc.d/init.d/tac_plus"
   }
   branches[OS] = {
     node {

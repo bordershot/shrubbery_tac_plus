@@ -1,4 +1,4 @@
-def package_name = 'tacplus'
+def package_name = 'tac_plus'
 def os_to_build = ['Ubuntu1404', 'CentOS6']
 def version_number = "4.0.4.28"
 def osmap = ['CentOS7':['packaging':'rpm', 'init':'systemd', 'distro':'el7', 
@@ -83,7 +83,7 @@ for (x in os_to_build) {
           } else {
             sh "apt-get update; dpkg -i $WORKSPACE/out/${package_name}*.deb || /bin/true; apt-get -f -y install"
           }
-          sh '/etc/init.d/tac_plus status'
+          sh '/etc/init.d/${package_name} status'
         }
       }
       stage('publish') {

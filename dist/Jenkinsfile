@@ -80,7 +80,7 @@ for (x in os_to_build) {
           } else {
             sh "apt-get update; dpkg -i $WORKSPACE/out/${package_name}*.deb || /bin/true; apt-get -f -y install"
           }
-          sh 'systemctl tac_plus status'
+          sh 'systemctl status tac_plus'
         }
       }
       stage('publish') {

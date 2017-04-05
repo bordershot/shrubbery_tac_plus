@@ -31,12 +31,15 @@ for (x in os_to_build) {
   if(osmap[OS]['distro'] && osmap[OS]['packaging'] == 'rpm') {
     rpm_dist = "--rpm-dist ${osmap[OS]['distro']}"
   }
-  def deb_systemd = ""
+  def os_init_script = ""
   if(osmap[OS]['init'] == 'systemd' && osmap[OS]['packaging'] == 'deb') {
-    deb_systemd = "--deb-systemd ../dist/systemd/etc/systemd/system/tac_plus.service"
+    os_init_script = "--deb-systemd ../dist/systemd/etc/systemd/system/tac_plus.service"
   }
   else if (osmap[OS]['init'] == 'sysv' && osmap[OS]['packaging'] == 'deb') {
-    deb_systemd = "--deb-init ../dist/sysv/etc/rc.d/init.d/tac_plus"
+    os_init_script = "--deb-init ../dist/sysv/etc/rc.d/init.d/tac_plus"
+  }
+  else if (osmap[OS]['init'] == 'sysv' && osmap[OS]['packaging'] == 'rpm') {
+    os_init_script = "--rpm-init ../dist/sysv/etc/rc.d/init.d/tac_plus"
   }
   def deb_dist = ""
   if(osmap[OS]['packaging'] == 'deb') {
@@ -69,7 +72,7 @@ for (x in os_to_build) {
           sh "./configure && make && make install DESTDIR=$WORKSPACE/fpm-build-${OS}"
         }
         stage('package') {
-          sh "cd $WORKSPACE/out; fpm -f -t ${osmap[OS]['packaging']} -s dir -n ${package_name}${deb_dist} --version ${version_number} --iteration ${BUILD_NUMBER} ${rpm_dist}${deb_systemd} --description \"DD TacPlus\" ${install_deps} -C $WORKSPACE/fpm-build-${OS} ."
+          sh "cd $WORKSPACE/out; fpm -f -t ${osmap[OS]['packaging']} -s dir -n ${package_name}${deb_dist} --version ${version_number} --iteration ${BUILD_NUMBER} ${rpm_dist}${os_init_script} --description \"DD TacPlus\" ${install_deps} -C $WORKSPACE/fpm-build-${OS} ."
           sh "rm -rf $WORKSPACE/fpm-build-${OS}"
         }
       }

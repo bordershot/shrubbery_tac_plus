@@ -12,7 +12,8 @@ TACPLUS_ARG=""
 TACPLUS_CNF=/etc/tacacs/tac_plus.conf
 
 # Source function library.
-. /etc/rc.d/init.d/functions
+#. /etc/rc.d/init.d/functions
+. /lib/lsb/init-functions
 
 case "$1" in
 start)

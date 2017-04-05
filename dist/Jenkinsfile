@@ -83,7 +83,7 @@ for (x in os_to_build) {
           } else {
             sh "apt-get update; dpkg -i $WORKSPACE/out/${package_name}*.deb || /bin/true; apt-get -f -y install"
           }
-          sh '/etc/init.d/${package_name} status'
+          sh "/etc/init.d/${package_name} status"
         }
       }
       stage('publish') {

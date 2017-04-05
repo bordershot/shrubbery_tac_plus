@@ -1,4 +1,4 @@
-def package_name = 'tac_plus'
+def package_name = 'tacplus'
 def os_to_build = ['Ubuntu1404', 'CentOS6']
 def version_number = "4.0.4.28"
 def osmap = ['CentOS7':['packaging':'rpm', 'init':'systemd', 'distro':'el7', 
@@ -33,13 +33,13 @@ for (x in os_to_build) {
   }
   def os_init_script = ""
   if(osmap[OS]['init'] == 'systemd' && osmap[OS]['packaging'] == 'deb') {
-    os_init_script = "--deb-systemd ../dist/systemd/etc/systemd/system/tac_plus.service"
+    os_init_script = "--deb-systemd ../dist/systemd/etc/systemd/system/${package_name}.service"
   }
   else if (osmap[OS]['init'] == 'sysv' && osmap[OS]['packaging'] == 'deb') {
-    os_init_script = "--deb-init ../dist/sysv/etc/rc.d/init.d/tac_plus"
+    os_init_script = "--deb-init ../dist/sysv/etc/rc.d/init.d/${package_name}"
   }
   else if (osmap[OS]['init'] == 'sysv' && osmap[OS]['packaging'] == 'rpm') {
-    os_init_script = "--rpm-init ../dist/sysv/etc/rc.d/init.d/tac_plus"
+    os_init_script = "--rpm-init ../dist/sysv/etc/rc.d/init.d/${package_name}"
   }
   def deb_dist = ""
   if(osmap[OS]['packaging'] == 'deb') {

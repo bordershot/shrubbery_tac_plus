@@ -3,6 +3,6 @@ Description=Shrubbery TACACS+ Server
 After=network.target auditd.service
 
 [Service]
-ExecStart=/usr/sbin/tac_plus -C /etc/tacacs/tac_plus.conf
+ExecStart=/usr/sbin/tac_plus -C /etc/tacacs/tacplus.conf
 KillMode=process
 Restart=on-failure

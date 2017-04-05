@@ -79,8 +79,8 @@ for (x in os_to_build) {
             sh "yum -y install $WORKSPACE/out/${package_name}*.rpm"
           } else {
             sh "apt-get update; dpkg -i $WORKSPACE/out/${package_name}*.deb || /bin/true; apt-get -f -y install"
-            sh 'service tac_plus status'
           }
+          sh 'service tac_plus status'
         }
       }
       stage('publish') {

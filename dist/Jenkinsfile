@@ -1,4 +1,5 @@
 def package_name = 'tacplus'
+def description = 'Tacacs for DD'
 def os_to_build = ['Ubuntu1404', 'CentOS6']
 def version_number = "4.0.4.28"
 def osmap = ['CentOS7':['packaging':'rpm', 'init':'systemd', 'distro':'el7', 
@@ -72,7 +73,7 @@ for (x in os_to_build) {
           sh "./configure && make && make install DESTDIR=$WORKSPACE/fpm-build-${OS}"
         }
         stage('package') {
-          sh "cd $WORKSPACE/out; fpm -f -t ${osmap[OS]['packaging']} -s dir -n ${package_name}${deb_dist} --version ${version_number} --iteration ${BUILD_NUMBER} ${rpm_dist} ${os_init_script} --description \"DD TacPlus\" ${install_deps} -C $WORKSPACE/fpm-build-${OS} ."
+          sh "cd $WORKSPACE/out; fpm -f -t ${osmap[OS]['packaging']} -s dir -n ${package_name}${deb_dist} --version ${version_number} --iteration ${BUILD_NUMBER} ${rpm_dist} ${os_init_script} --description \"${description}\" ${install_deps} -C $WORKSPACE/fpm-build-${OS} ."
           sh "rm -rf $WORKSPACE/fpm-build-${OS}"
         }
       }

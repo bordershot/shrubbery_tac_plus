@@ -57,7 +57,7 @@ for (x in os_to_build) {
           }
         }
         stage('download') {
-          git url: 'git@github.com:bordershot/shrubbery_tac_plus.git'
+          git url: 'https://github.com/bordershot/shrubbery_tac_plus.git'
         }
         stage('build') {
           sh "rm -rf $WORKSPACE/fpm-build-${OS} || true"
